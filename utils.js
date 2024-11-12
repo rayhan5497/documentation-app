@@ -1,3 +1,47 @@
+//Change Document Name
+let mainHeader = document.querySelector('.mainHeader');
+
+function handleClickForDocumentName() {
+  const textArea = document.createElement('textarea');
+  const divHeight = mainHeader.offsetHeight;
+  const divWidth = mainHeader.offsetWidth;
+
+  textArea.className = mainHeader.className;
+  textArea.id = 'textArea';
+  textArea.value = mainHeader.textContent;
+
+  textArea.style.height = (divHeight -40) + 'px';
+  textArea.style.width = (divWidth -40) + 'px';
+
+  mainHeader.replaceWith(textArea);
+  textArea.focus();
+
+  textArea.addEventListener('blur', () => {
+    const newDiv = document.createElement('div');
+    
+    newDiv.className = textArea.className;
+    newDiv.textContent = textArea.value;
+
+    textArea.replaceWith(newDiv);
+    
+    mainHeader = newDiv;
+
+    mainHeader.addEventListener('click', handleClickForDocumentName);
+  });
+
+  textArea.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault(); 
+      textArea.blur(); 
+    }
+  });
+}
+
+mainHeader.addEventListener('click', handleClickForDocumentName);
+
+
+
+//Add and Remove .hidden class upon toggle
 function toggleContent(container) {
   const paragraphs = container.querySelectorAll('p');
   paragraphs.forEach((p) => {
@@ -11,6 +55,7 @@ function toggleContent(container) {
   });
 }
 
+//Create TempButton
 function createButton(listItem, targetClass) {
   const tempButton = document.createElement('button');
   tempButton.classList.add('tempButton');

@@ -29,6 +29,14 @@ body {
     word-spacing: 3px;
 }
 
+#textArea {
+    font-size: 20px;
+    width: auto;
+    outline: none;
+    right: 0;
+    top: 0;
+    text-shadow: none;
+}
 
 /* INTRODUCTION LIST SECTION */
 .introduction {
