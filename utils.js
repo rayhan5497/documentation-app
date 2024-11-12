@@ -329,7 +329,20 @@ function addToolTip(event) {
   }
 }
 
-attachEventListeners(itemsContainer, 'mouseover', addToolTip);
+  itemsContainer.forEach(container => {
+    let timeoutId;
+  
+    container.addEventListener('mouseover', (event) => {
+      timeoutId = setTimeout(() => {
+        addToolTip(event);
+      }, 1000);
+    });
+  
+    container.addEventListener('mouseout', () => {
+      clearTimeout(timeoutId);
+    });
+  });
+
 
 //Creating Dynamic Edit Container
 let editContainer, lastParagraph, firstClassOfLastParagraph;
@@ -1006,8 +1019,6 @@ document.addEventListener('click', function (event){
       //update the attributes of Lists
       const allList = document.querySelectorAll('.listContainer li');
   
-      console.log(allList);
-  
       if (allList) {      
         allList.forEach((list, index) => {
   
@@ -1019,7 +1030,6 @@ document.addEventListener('click', function (event){
   
           //update the attributes of Paragraphs
           const allParagraphList = document.querySelectorAll('.paragraphListContainer li');
-          console.log(allParagraphList);
   
           if (allParagraphList) {      
             allParagraphList.forEach((list, index) => {
@@ -1052,7 +1062,6 @@ document.addEventListener('click', function (event){
       }
     }
     const listContainer = document.querySelector('.listContainer');
-    console.log('this is last element', listContainer); 
     if (listContainer.lastElementChild === null) {
       listContainer.textContent = 'Click "Add Notes" Button To Add Your First Notes';
     }
