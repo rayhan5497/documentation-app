@@ -45,6 +45,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   
     addButton.addEventListener('click', () => {
+      const listContainer = document.querySelector('.listContainer');
+      console.log('this is last element', listContainer); 
+      if (listContainer.textContent === 'Click "Add Notes" Button To Add Your First Notes') {
+        listContainer.textContent = '';
+      }
       const title = titleInput.value;
       const description = descriptionInput.value;
       if (title && description) {

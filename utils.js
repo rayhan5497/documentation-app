@@ -233,7 +233,6 @@ function createNewParagraphItem(title, description, id) {
   introHeaderContainer.appendChild(paragraphContainer);
   newListItem.appendChild(introHeaderContainer);
 
-  console.log(goTopButton);
   paragraphContainer.addEventListener('click', (event) => {
     if (event.target.classList.contains('goTop')) {
       event.preventDefault();
@@ -978,102 +977,83 @@ function moveEditContainer(event) {
 document.addEventListener('click', function (event){
 
     if (!event.target.classList.contains('deleteNotesButton')) return;
-    console.log('after if')
   
     const button = event.target;
   
-    let list, paragraphList;
+    let list, paragraphList, p;
   
     if ((list = button.closest('.list'))) {
       const targetId = list.querySelector('a').getAttribute('href').substring(1);
       paragraphList = document.getElementById(targetId).closest('.paragraphList');
   
-      // let itemContainer = paragraphList.querySelector('.itemContainer');
-      // if (itemContainer) {
-      //   let toolTipContainer = itemContainer.querySelector('.toolTipContainer');
-      //   if (toolTipContainer) {
-      //     toolTipContainer.remove();
-      //   }
-      // }
-  
-      // clonedItemContainerOrigin = itemContainer.cloneNode(true);
     } else if ((paragraphList = button.closest('.paragraphList'))) {
       const targetId = paragraphList
         .querySelector('.introHeaderContainer')
         .getAttribute('id');
   
-      // let itemContainer = button.closest('.itemContainer');
-      // if (itemContainer) {
-      //   let toolTipContainer = itemContainer.querySelector('.toolTipContainer');
-      //   if (toolTipContainer) {
-      //     toolTipContainer.remove();
-      //   }
-      // }
-  
-      // clonedItemContainerOrigin = itemContainer.cloneNode(true);
-  
       const attribute = `#${targetId}`;
       list = document.querySelector(`a[href='${attribute}']`).closest('.list');
     }
   
-    console.log(paragraphList);
-    if (list && paragraphList) {
-      list.remove();
-      paragraphList.remove();
-    }
 
-    //update the attributes of Lists
-    const allList = document.querySelectorAll('.listContainer li');
+    if (button.closest('.introHeader') || button.closest('.list')) {
 
-    console.log(allList);
+      if (list && paragraphList) {
+        list.remove();
+        paragraphList.remove();
+      }
 
-    if (allList) {      
-      allList.forEach((list, index) => {
-
-        list.querySelector('a').dataset.target = `targetLink${index + 1}`;
-        list.querySelector('a').href = `#introHeader${index + 1}`;
-        list.id = `list${index + 1}`;
-      });
-    }
-
-        //update the attributes of Paragraphs
-        const allParagraphList = document.querySelectorAll('.paragraphListContainer li');
-
-        console.log(allParagraphList);
-
-        if (allParagraphList) {      
-          allParagraphList.forEach((list, index) => {
-
-            list.querySelector('.introHeaderContainer').id = `introHeader${index + 1}`;
-            list.querySelector('.paragraphContainer').lastElementChild.classList = `targetLink${index + 1}`;
-            const tempButton = list.querySelector('.introHeaderContainer').querySelector('.tempButton');
-            if (tempButton) {
-              tempButton.dataset.creatorId = `list${index + 1}`;
-            }
-          });
+      //update the attributes of Lists
+      const allList = document.querySelectorAll('.listContainer li');
+  
+      console.log(allList);
+  
+      if (allList) {      
+        allList.forEach((list, index) => {
+  
+          list.querySelector('a').dataset.target = `targetLink${index + 1}`;
+          list.querySelector('a').href = `#introHeader${index + 1}`;
+          list.id = `list${index + 1}`;
+        });
+      }
+  
+          //update the attributes of Paragraphs
+          const allParagraphList = document.querySelectorAll('.paragraphListContainer li');
+          console.log(allParagraphList);
+  
+          if (allParagraphList) {      
+            allParagraphList.forEach((list, index) => {
+              const allP = list.querySelector('.paragraphContainer').querySelectorAll('p');
+              allP.forEach(p => {
+                if(p.classList.contains('hidden')) {
+                  p.classList.remove('hidden');
+                }
+              })
+  
+              list.querySelector('.introHeaderContainer').id = `introHeader${index + 1}`;
+              list.querySelector('.paragraphContainer').lastElementChild.classList = `targetLink${index + 1}`;
+              const tempButton = list.querySelector('.introHeaderContainer').querySelector('.tempButton');
+              if (tempButton) {
+                tempButton.dataset.creatorId = `list${index + 1}`;
+              }
+            });
+          }
+    } else if (p = button.closest('p')) {
+      const paragraphContainer = p.closest('.paragraphContainer');
+      const allP = paragraphContainer.querySelectorAll('p');
+      if (paragraphContainer.lastElementChild !== allP[0]) {
+        const classListOfLastParagraph = paragraphContainer.lastElementChild.classList[0];
+        const topBackItemContainer = paragraphContainer.lastElementChild.lastElementChild;
+        p.remove();
+        if (paragraphContainer.lastElementChild) {
+          paragraphContainer.lastElementChild.classList.add(classListOfLastParagraph);
+          paragraphContainer.lastElementChild.appendChild(topBackItemContainer);
         }
+      }
+    }
+    const listContainer = document.querySelector('.listContainer');
+    console.log('this is last element', listContainer); 
+    if (listContainer.lastElementChild === null) {
+      listContainer.textContent = 'Click "Add Notes" Button To Add Your First Notes';
+    }
 })
-
-// function updateListItems() {
-//   const listItems = document.querySelectorAll('ol li'); // Get all list items
-//   listItems.forEach((item, index) => {
-//     // Update class
-//     item.className = `list${index + 1}`;
-
-//     // Update ID
-//     item.id = `list${index + 1}`;
-
-//     // Update data-target
-//     item.dataset.target = `targetLink${index + 1}`;
-//   });
-// }
-
-// // Example: Adding a new list item
-// const newList = document.createElement('li');
-// newList.textContent = 'New Item';
-// document.querySelector('ol').appendChild(newList); // Append to the list
-// updateListItems(); // Update the list items
-
-// // Example: Removing a list item
-// document.querySelector('ol li:last-child').remove(); // Remove the last item
-// updateListItems(); // Update the list items
