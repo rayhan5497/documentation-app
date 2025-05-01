@@ -10,20 +10,20 @@ function handleClickForDocumentName() {
   textArea.id = 'textArea';
   textArea.value = mainHeader.textContent;
 
-  textArea.style.height = (divHeight -40) + 'px';
-  textArea.style.width = (divWidth -40) + 'px';
+  textArea.style.height = divHeight - 40 + 'px';
+  textArea.style.width = divWidth - 40 + 'px';
 
   mainHeader.replaceWith(textArea);
   textArea.focus();
 
   textArea.addEventListener('blur', () => {
     const newDiv = document.createElement('div');
-    
+
     newDiv.className = textArea.className;
     newDiv.textContent = textArea.value;
 
     textArea.replaceWith(newDiv);
-    
+
     mainHeader = newDiv;
 
     mainHeader.addEventListener('click', handleClickForDocumentName);
@@ -31,15 +31,13 @@ function handleClickForDocumentName() {
 
   textArea.addEventListener('keydown', (event) => {
     if (event.key === 'Enter') {
-      event.preventDefault(); 
-      textArea.blur(); 
+      event.preventDefault();
+      textArea.blur();
     }
   });
 }
 
 mainHeader.addEventListener('click', handleClickForDocumentName);
-
-
 
 //Add and Remove .hidden class upon toggle
 function toggleContent(container) {
@@ -329,20 +327,19 @@ function addToolTip(event) {
   }
 }
 
-  itemsContainer.forEach(container => {
-    let timeoutId;
-  
-    container.addEventListener('mouseover', (event) => {
-      timeoutId = setTimeout(() => {
-        addToolTip(event);
-      }, 1000);
-    });
-  
-    container.addEventListener('mouseout', () => {
-      clearTimeout(timeoutId);
-    });
+itemsContainer.forEach((container) => {
+  let timeoutId;
+
+  container.addEventListener('mouseover', (event) => {
+    timeoutId = setTimeout(() => {
+      addToolTip(event);
+    }, 1000);
   });
 
+  container.addEventListener('mouseout', () => {
+    clearTimeout(timeoutId);
+  });
+});
 
 //Creating Dynamic Edit Container
 let editContainer, lastParagraph, firstClassOfLastParagraph;
@@ -523,7 +520,6 @@ document.addEventListener('click', function (event) {
 
     // Removing The First Class Of Last Paragraph
     let paragraphContainer,
-      // lastParagraph,
       clonedItemContainerForNewP,
       topBackItemContainer,
       br;
@@ -707,8 +703,6 @@ document.addEventListener('click', function (event) {
   }
 });
 
-
-
 // drag editContainer
 document.addEventListener('mousedown', function (event) {
   if (event.target.classList.contains('draggableArea')) {
@@ -716,37 +710,39 @@ document.addEventListener('mousedown', function (event) {
   }
 });
 document.addEventListener('mousemove', function (event) {
-  if (event.target.classList.contains('draggableArea') || event.target.closest('html')) {
-      movesEditContainer(event);
+  if (
+    event.target.classList.contains('draggableArea') ||
+    event.target.closest('html')
+  ) {
+    movesEditContainer(event);
   }
 });
 document.addEventListener('mouseup', function (event) {
-  if (event.target.classList.contains('draggableArea') 
-    || event.target.closest('html')
+  if (
+    event.target.classList.contains('draggableArea') ||
+    event.target.closest('html')
   ) {
     stopDragging(event);
   }
 });
 
-
 let isDragging, offsetX, offsetY, html;
 function dragEditContainer(event) {
-  editContainer = event.target.closest('.edit-container');  
-    isDragging = true;
-    offsetX = event.clientX - editContainer.offsetLeft;
-    offsetY = event.clientY - editContainer.offsetTop;
-    editContainer.style.transition = 'none';
+  editContainer = event.target.closest('.edit-container');
+  isDragging = true;
+  offsetX = event.clientX - editContainer.offsetLeft;
+  offsetY = event.clientY - editContainer.offsetTop;
+  editContainer.style.transition = 'none';
 }
 
 function movesEditContainer(event) {
   html = event.target.closest('html');
   editContainer = html.querySelector('.edit-container');
   if (isDragging) {
-    editContainer.style.left = (event.clientX - offsetX) + 'px';
-    editContainer.style.top = (event.clientY - offsetY) + 'px';
-  } 
+    editContainer.style.left = event.clientX - offsetX + 'px';
+    editContainer.style.top = event.clientY - offsetY + 'px';
+  }
 }
-
 
 function stopDragging(event) {
   html = event.target.closest('html');
@@ -755,9 +751,7 @@ function stopDragging(event) {
     isDragging = false;
     editContainer.style.transition = 'all 0.3s ease-in-out';
   }
-};
-
-
+}
 
 //Show And Hide addTopBelowButtons
 function showHideAddTopBelowButtons(event) {
@@ -987,82 +981,92 @@ function moveEditContainer(event) {
 }
 
 // Delete List and Paragraph
-document.addEventListener('click', function (event){
+document.addEventListener('click', function (event) {
+  if (!event.target.classList.contains('deleteNotesButton')) return;
 
-    if (!event.target.classList.contains('deleteNotesButton')) return;
-  
-    const button = event.target;
-  
-    let list, paragraphList, p;
-  
-    if ((list = button.closest('.list'))) {
-      const targetId = list.querySelector('a').getAttribute('href').substring(1);
-      paragraphList = document.getElementById(targetId).closest('.paragraphList');
-  
-    } else if ((paragraphList = button.closest('.paragraphList'))) {
-      const targetId = paragraphList
-        .querySelector('.introHeaderContainer')
-        .getAttribute('id');
-  
-      const attribute = `#${targetId}`;
-      list = document.querySelector(`a[href='${attribute}']`).closest('.list');
+  const button = event.target;
+
+  let list, paragraphList, p;
+
+  if ((list = button.closest('.list'))) {
+    const targetId = list.querySelector('a').getAttribute('href').substring(1);
+    paragraphList = document.getElementById(targetId).closest('.paragraphList');
+  } else if ((paragraphList = button.closest('.paragraphList'))) {
+    const targetId = paragraphList
+      .querySelector('.introHeaderContainer')
+      .getAttribute('id');
+
+    const attribute = `#${targetId}`;
+    list = document.querySelector(`a[href='${attribute}']`).closest('.list');
+  }
+
+  if (button.closest('.introHeader') || button.closest('.list')) {
+    if (list && paragraphList) {
+      list.remove();
+      paragraphList.remove();
     }
-  
 
-    if (button.closest('.introHeader') || button.closest('.list')) {
+    //update the attributes of Lists
+    const allList = document.querySelectorAll('.listContainer li');
 
-      if (list && paragraphList) {
-        list.remove();
-        paragraphList.remove();
-      }
+    if (allList) {
+      allList.forEach((list, index) => {
+        list.querySelector('a').dataset.target = `targetLink${index + 1}`;
+        list.querySelector('a').href = `#introHeader${index + 1}`;
+        list.id = `list${index + 1}`;
+      });
+    }
 
-      //update the attributes of Lists
-      const allList = document.querySelectorAll('.listContainer li');
-  
-      if (allList) {      
-        allList.forEach((list, index) => {
-  
-          list.querySelector('a').dataset.target = `targetLink${index + 1}`;
-          list.querySelector('a').href = `#introHeader${index + 1}`;
-          list.id = `list${index + 1}`;
-        });
-      }
-  
-          //update the attributes of Paragraphs
-          const allParagraphList = document.querySelectorAll('.paragraphListContainer li');
-  
-          if (allParagraphList) {      
-            allParagraphList.forEach((list, index) => {
-              const allP = list.querySelector('.paragraphContainer').querySelectorAll('p');
-              allP.forEach(p => {
-                if(p.classList.contains('hidden')) {
-                  p.classList.remove('hidden');
-                }
-              })
-  
-              list.querySelector('.introHeaderContainer').id = `introHeader${index + 1}`;
-              list.querySelector('.paragraphContainer').lastElementChild.classList = `targetLink${index + 1}`;
-              const tempButton = list.querySelector('.introHeaderContainer').querySelector('.tempButton');
-              if (tempButton) {
-                tempButton.dataset.creatorId = `list${index + 1}`;
-              }
-            });
+    //update the attributes of Paragraphs
+    const allParagraphList = document.querySelectorAll(
+      '.paragraphListContainer li'
+    );
+
+    if (allParagraphList) {
+      allParagraphList.forEach((list, index) => {
+        const allP = list
+          .querySelector('.paragraphContainer')
+          .querySelectorAll('p');
+        allP.forEach((p) => {
+          if (p.classList.contains('hidden')) {
+            p.classList.remove('hidden');
           }
-    } else if (p = button.closest('p')) {
-      const paragraphContainer = p.closest('.paragraphContainer');
-      const allP = paragraphContainer.querySelectorAll('p');
-      if (paragraphContainer.lastElementChild !== allP[0]) {
-        const classListOfLastParagraph = paragraphContainer.lastElementChild.classList[0];
-        const topBackItemContainer = paragraphContainer.lastElementChild.lastElementChild;
-        p.remove();
-        if (paragraphContainer.lastElementChild) {
-          paragraphContainer.lastElementChild.classList.add(classListOfLastParagraph);
-          paragraphContainer.lastElementChild.appendChild(topBackItemContainer);
+        });
+
+        list.querySelector('.introHeaderContainer').id = `introHeader${
+          index + 1
+        }`;
+        list.querySelector(
+          '.paragraphContainer'
+        ).lastElementChild.classList = `targetLink${index + 1}`;
+        const tempButton = list
+          .querySelector('.introHeaderContainer')
+          .querySelector('.tempButton');
+        if (tempButton) {
+          tempButton.dataset.creatorId = `list${index + 1}`;
         }
+      });
+    }
+  } else if ((p = button.closest('p'))) {
+    const paragraphContainer = p.closest('.paragraphContainer');
+    const allP = paragraphContainer.querySelectorAll('p');
+    if (paragraphContainer.lastElementChild !== allP[0]) {
+      const classListOfLastParagraph =
+        paragraphContainer.lastElementChild.classList[0];
+      const topBackItemContainer =
+        paragraphContainer.lastElementChild.lastElementChild;
+      p.remove();
+      if (paragraphContainer.lastElementChild) {
+        paragraphContainer.lastElementChild.classList.add(
+          classListOfLastParagraph
+        );
+        paragraphContainer.lastElementChild.appendChild(topBackItemContainer);
       }
     }
-    const listContainer = document.querySelector('.listContainer');
-    if (listContainer.lastElementChild === null) {
-      listContainer.textContent = 'Click "Add Notes" Button To Add Your First Notes';
-    }
-})
+  }
+  const listContainer = document.querySelector('.listContainer');
+  if (listContainer.lastElementChild === null) {
+    listContainer.textContent =
+      'Click "Add Notes" Button To Add Your First Notes';
+  }
+});
